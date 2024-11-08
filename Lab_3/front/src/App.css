@@ -1,0 +1,66 @@
+/* Styles for the main container */
+.main-container {
+  height: 100vh;
+  background-color: white;
+  position: relative;
+}
+
+/* Coordinates display in the top-right corner */
+.coordinates-display {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 16px;
+  color: black;
+}
+
+/* Buttons centered at the top */
+.button-container {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Button styling with margin */
+.button {
+  margin-bottom: 10px;
+}
+
+/* Centered text that appears on button or screen click */
+.centered-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  color: black;
+}
+
+/* Click info at the bottom center */
+.click-info {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 18px;
+  color: black;
+}
+
+/* Circle that appears on click */
+.click-circle {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: yellow;
+  border-radius: 50%;
+  opacity: 1;
+  animation: fadeOut 0.5s ease-out forwards;
+}
+
+/* Fade-out animation */
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
