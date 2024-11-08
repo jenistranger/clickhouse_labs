@@ -15,12 +15,10 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-# Настройки подключения к ClickHouse
 DATABASE_URL = "clickhouse+http://default:quick@localhost:8123/grebomas"
 engine = create_engine(DATABASE_URL)
 metadata = MetaData()
 
-# Определение таблицы mouse_movements в SQLAlchemy
 mouse_movements = Table(
     'mouse_movements', metadata,
     Column('id', Integer, primary_key=True),
@@ -31,37 +29,32 @@ mouse_movements = Table(
     Column('clientTimeStamp', DateTime),
     Column('button', Integer),
     Column('target', String),
-    # Указываем движок MergeTree для ClickHouse
     engines.MergeTree(order_by=['id'])
 )
 
-# Создаем сессию для работы с ClickHouse
 metadata.create_all(engine)
 session = make_session(engine)
 
-# Модель данных для валидации входных данных
 class MouseMovement(BaseModel):
     x: int
     y: int
     deltaX: int
     deltaY: int
-    clientTimeStamp: str  # Передаем временную метку как строку
+    clientTimeStamp: str
     button: int
     target: str
 
 @app.post("/upload-mouse-movement")
 async def upload_mouse_movement(data: MouseMovement):
     try:
-        # Преобразование временной метки из строки в datetime
+        
         timestamp = datetime.strptime(data.clientTimeStamp, "%Y-%m-%d %H:%M:%S")
 
-        # Получаем максимальный id из таблицы и прибавляем 1 для нового значения
         with engine.begin() as conn:
             result = conn.execute(select(func.max(mouse_movements.c.id)))
             max_id = result.scalar() or 0
             new_id = max_id + 1
 
-            # Создаем запрос на вставку данных с новым id
             insert_query = mouse_movements.insert().values(
                 id=new_id,
                 x=data.x,
@@ -73,7 +66,6 @@ async def upload_mouse_movement(data: MouseMovement):
                 target=data.target
             )
 
-            # Выполняем вставку данных
             conn.execute(insert_query)
 
         return {"status": "Data inserted successfully"}
